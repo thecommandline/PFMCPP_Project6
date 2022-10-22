@@ -58,46 +58,64 @@ Purpose:  This project will show you the difference between member functions and
 #include <string>
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(int v, const char* n) : value(v), name(n){}
+    int value;
+    std::string name;
 };
 
-struct <#structName1#>                                //4
+struct Compare
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b)
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if(a != nullptr && b != nullptr)
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float itemA { 0 }, itemB { 0 };
+    float update(float* updatedValue)
     {
-        
+        if (updatedValue != nullptr)
+        {
+            std::cout << "U's itemA value: " << this->itemA << std::endl;
+            this->itemA = *updatedValue;
+            std::cout << "U's itemA updated value: " << this->itemA << std::endl;
+            std::cout << "U's itemB value: " << this->itemB << std::endl;
+            while(std::abs(this->itemB - this->itemA) > 0.001f)
+            {
+                this->itemB += 0.1f;
+            }
+            std::cout << "U's itemB updated value: " << this->itemB << std::endl;
+            return this->itemB * this->itemA;
+        }
+        std::cout << "Error: 'update' function called with nullptr.";
+        return -1.f;
     }
 };
 
-struct <#structname2#>
+struct Update
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float staticUpdate(U* that, float* updatedValue )
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        std::cout << "U's itemA value: " << that->itemA << std::endl;
+        that->itemA = *updatedValue;
+        std::cout << "U's itemA updated value: " << that->itemA << std::endl;
+        std::cout << "U's itemB value: " << that->itemB << std::endl;
+        while( std::abs(that->itemB - that->itemA) > 0.001f)
         {
             /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+             write something that makes the distance between that->itemB and that->itemA get smaller
              */
-            that-><#name2#> += ;
+            that->itemB += 0.1f;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        std::cout << "U's itemB updated value: " << that->itemB << std::endl;
+        return that->itemB * that->itemA;
     }
 };
         
@@ -117,17 +135,26 @@ struct <#structname2#>
 
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    T t1( 8, "Thing1");
+    T t2( 7, "Thing2");
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    Compare f;
+    auto* smaller = f.compare(&t1,&t2);
+    if (smaller != nullptr)
+    {
+        std::cout << "the smaller one is << " << smaller->name << std::endl;
+    }
+    else
+    {
+        std::cout << "Error: One or more T objects have the same 'value'." << std::endl;
+    }
     
-    U <#name3#>;
+    std::cout << std::endl;
+    U u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
+    std::cout << "[static func] u1's multiplied values: \n" << Update::staticUpdate(&u1, &updatedValue) << std::endl;
     
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
+    std::cout << std::endl;
+    U u2;
+    std::cout << "[member func] u2's multiplied values: \n" << u2.update( &updatedValue ) << std::endl;
 }
