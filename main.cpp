@@ -94,7 +94,7 @@ struct U
             std::cout << "U's itemB updated value: " << this->itemB << std::endl;
             return this->itemB * this->itemA;
         }
-        std::cout << "Error: 'update' function called with nullptr.";
+        std::cout << "Error: 'update' function called with nullptr." << std::endl;
         return -1.f;
     }
 };
@@ -103,19 +103,24 @@ struct Update
 {
     static float staticUpdate(U* that, float* updatedValue )
     {
-        std::cout << "U's itemA value: " << that->itemA << std::endl;
-        that->itemA = *updatedValue;
-        std::cout << "U's itemA updated value: " << that->itemA << std::endl;
-        std::cout << "U's itemB value: " << that->itemB << std::endl;
-        while( std::abs(that->itemB - that->itemA) > 0.001f)
+        if (that != nullptr && updatedValue != nullptr)
         {
-            /*
-             write something that makes the distance between that->itemB and that->itemA get smaller
-             */
-            that->itemB += 0.1f;
+            std::cout << "U's itemA value: " << that->itemA << std::endl;
+            that->itemA = *updatedValue;
+            std::cout << "U's itemA updated value: " << that->itemA << std::endl;
+            std::cout << "U's itemB value: " << that->itemB << std::endl;
+            while( std::abs(that->itemB - that->itemA) > 0.001f)
+            {
+                /*
+                 write something that makes the distance between that->itemB and that->itemA get smaller
+                 */
+                that->itemB += 0.1f;
+            }
+            std::cout << "U's itemB updated value: " << that->itemB << std::endl;
+            return that->itemB * that->itemA;
         }
-        std::cout << "U's itemB updated value: " << that->itemB << std::endl;
-        return that->itemB * that->itemA;
+        std::cout << "Error: 'staticUpdate' function called with nullptr." << std::endl;
+        return -1.f;
     }
 };
         
