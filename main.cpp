@@ -36,13 +36,11 @@ struct T
 
 struct Compare
 {
-    T* compare(T* a, T* b)
+    T* compare(T& a, T& b)
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
         return nullptr;
     }
 };
@@ -50,48 +48,38 @@ struct Compare
 struct U
 {
     float itemA { 0 }, itemB { 0 };
-    float update(float* updatedValue)
+    float update(float& updatedValue)
     {
-        if (updatedValue != nullptr)
+        std::cout << "U's itemA value: " << itemA << std::endl;
+        this->itemA = updatedValue;
+        std::cout << "U's itemA updated value: " << itemA << std::endl;
+        std::cout << "U's itemB value: " << itemB << std::endl;
+        while(std::abs(itemB - itemA) > 0.001f)
         {
-            std::cout << "U's itemA value: " << this->itemA << std::endl;
-            this->itemA = *updatedValue;
-            std::cout << "U's itemA updated value: " << this->itemA << std::endl;
-            std::cout << "U's itemB value: " << this->itemB << std::endl;
-            while(std::abs(this->itemB - this->itemA) > 0.001f)
-            {
-                this->itemB += 0.1f;
-            }
-            std::cout << "U's itemB updated value: " << this->itemB << std::endl;
-            return this->itemB * this->itemA;
+            itemB += 0.1f;
         }
-        std::cout << "Error: 'update' function called with nullptr." << std::endl;
-        return -1.f;
+        std::cout << "U's itemB updated value: " << itemB << std::endl;
+        return itemB * itemA;
     }
 };
 
 struct Update
 {
-    static float staticUpdate(U* that, float* updatedValue )
+    static float staticUpdate(U& that, float& updatedValue )
     {
-        if (that != nullptr && updatedValue != nullptr)
+        std::cout << "U's itemA value: " << that.itemA << std::endl;
+        that.itemA = updatedValue;
+        std::cout << "U's itemA updated value: " << that.itemA << std::endl;
+        std::cout << "U's itemB value: " << that.itemB << std::endl;
+        while( std::abs(that.itemB - that.itemA) > 0.001f)
         {
-            std::cout << "U's itemA value: " << that->itemA << std::endl;
-            that->itemA = *updatedValue;
-            std::cout << "U's itemA updated value: " << that->itemA << std::endl;
-            std::cout << "U's itemB value: " << that->itemB << std::endl;
-            while( std::abs(that->itemB - that->itemA) > 0.001f)
-            {
-                /*
-                 write something that makes the distance between that->itemB and that->itemA get smaller
-                 */
-                that->itemB += 0.1f;
-            }
-            std::cout << "U's itemB updated value: " << that->itemB << std::endl;
-            return that->itemB * that->itemA;
+            /*
+             write something that makes the distance between that->itemB and that->itemA get smaller
+             */
+            that.itemB += 0.1f;
         }
-        std::cout << "Error: 'staticUpdate' function called with nullptr." << std::endl;
-        return -1.f;
+        std::cout << "U's itemB updated value: " << that.itemB << std::endl;
+        return that.itemB * that.itemA;
     }
 };
         
@@ -115,7 +103,7 @@ int main()
     T t2( 7, "Thing2");
     
     Compare f;
-    auto* smaller = f.compare(&t1,&t2);
+    auto* smaller = f.compare(t1, t2);
     if (smaller != nullptr)
     {
         std::cout << "the smaller one is << " << smaller->name << std::endl;
@@ -128,9 +116,9 @@ int main()
     std::cout << std::endl;
     U u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: \n" << Update::staticUpdate(&u1, &updatedValue) << std::endl;
+    std::cout << "[static func] u1's multiplied values: \n" << Update::staticUpdate(u1, updatedValue) << std::endl;
     
     std::cout << std::endl;
     U u2;
-    std::cout << "[member func] u2's multiplied values: \n" << u2.update( &updatedValue ) << std::endl;
+    std::cout << "[member func] u2's multiplied values: \n" << u2.update(updatedValue) << std::endl;
 }
